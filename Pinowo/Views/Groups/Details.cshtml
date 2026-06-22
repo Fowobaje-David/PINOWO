@@ -1,0 +1,138 @@
+@using Pinowo.Models.Enums
+@inject Microsoft.AspNetCore.Identity.UserManager<Pinowo.Models.User> UserManager
+@model GroupDetailsViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="flex flex-col md:flex-row md:justify-between md:items-end gap-3 mb-10">
+    <div>
+        <h1 class="font-serif text-4xl md:text-5xl text-primary tracking-tight">@Model.Name</h1>
+        <p class="th-label mt-2">Created by @Model.CreatedByName on @Model.CreatedAt.ToString("d MMM yyyy")</p>
+    </div>
+    <a asp-action="Index" class="btn btn-ghost self-start md:self-auto">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span> All groups
+    </a>
+</div>
+
+<!-- Balances hero (content rendered live by balances.js) -->
+<div id="balances-panel" data-group-id="@Model.Id" data-current-user-id="@UserManager.GetUserId(User)" class="card p-6 md:p-8 mb-8">
+    <div class="flex justify-between items-center mb-2">
+        <div class="flex items-center gap-3">
+            <h2 class="font-serif text-2xl text-primary">Balances</h2>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-pos-bg border border-[#C8E6C9]">
+                <span class="w-1.5 h-1.5 rounded-full bg-pos"></span>
+                <span id="balances-status" class="text-[10px] uppercase font-bold tracking-widest text-pos"></span>
+            </span>
+        </div>
+        <a asp-controller="Settlements" asp-action="Index" asp-route-groupId="@Model.Id" class="btn btn-gold btn-sm">Settle up</a>
+    </div>
+    <div id="balances-content" class="mt-4"><div class="text-on-surface-variant text-sm">Loading…</div></div>
+</div>
+
+<!-- Members + Add member -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+    <div class="md:col-span-7">
+        <div class="card p-6 md:p-8 h-full">
+            <h2 class="font-serif text-2xl text-primary mb-5">Members <span class="text-on-surface-variant text-lg">(@Model.Members.Count)</span></h2>
+            <div class="divide-y divide-hairline">
+                @foreach (var m in Model.Members)
+                {
+                    <div class="flex items-center justify-between py-4 first:pt-0 last:pb-0">
+                        <div class="flex flex-col">
+                            <span class="font-medium text-on-surface">@m.User.Name</span>
+                            <span class="text-[13px] text-on-surface-variant">@m.User.Email</span>
+                        </div>
+                        <span class="chip chip-muted">joined @m.JoinedAt.ToString("d MMM")</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="md:col-span-5">
+        <div class="card p-6 md:p-8 h-full" style="background:#f9f2ed;">
+            <h2 class="font-serif text-2xl text-primary mb-5">Add a member</h2>
+            @if (Model.AddableUsers.Any())
+            {
+                <form asp-action="AddMember" method="post" class="space-y-4">
+                    <input type="hidden" name="GroupId" value="@Model.Id" />
+                    <div>
+                        <label class="field-label">Select a user</label>
+                        <div class="select-wrap">
+                            <select name="UserId" class="field" required>
+                                <option value="">Select a user…</option>
+                                @foreach (var u in Model.AddableUsers)
+                                {
+                                    <option value="@u.Id">@u.Name (@u.Email)</option>
+                                }
+                            </select>
+                            <span class="chevron material-symbols-outlined">expand_more</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-obsidian w-full">Add member</button>
+                </form>
+            }
+            else
+            {
+                <p class="text-on-surface-variant text-sm">All registered users are already in this group.</p>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Expenses -->
+<div class="mt-12 pt-10 border-t border-hairline">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="font-serif text-3xl text-primary">Expenses</h2>
+        <a asp-controller="Expenses" asp-action="Add" asp-route-groupId="@Model.Id" class="btn btn-gold btn-sm">
+            <span class="material-symbols-outlined text-[18px]">add</span> Add expense
+        </a>
+    </div>
+
+    @if (!Model.Expenses.Any())
+    {
+        <div class="card border-dashed p-8 text-center text-on-surface-variant">No expenses recorded yet.</div>
+    }
+    else
+    {
+        <div class="card overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-surface-low border-b border-hairline">
+                        <th class="px-6 py-4 th-label">Description</th>
+                        <th class="px-6 py-4 th-label">Paid by</th>
+                        <th class="px-6 py-4 th-label">Amount</th>
+                        <th class="px-6 py-4 th-label text-right">≈ USD at entry</th>
+                        <th class="px-6 py-4 th-label">Split</th>
+                        <th class="px-6 py-4 th-label">When</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-hairline">
+                    @foreach (var e in Model.Expenses)
+                    {
+                        <tr class="hover:bg-surface-low/60 transition-colors">
+                            <td class="px-6 py-5 font-medium text-primary">@e.Description</td>
+                            <td class="px-6 py-5 text-on-surface-variant">@e.PaidByName</td>
+                            <td class="px-6 py-5">
+                                <span class="font-medium">@e.AmountDisplay</span>
+                                <span class="chip @(e.Currency == CurrencyType.BTC ? "chip-btc" : "chip-usdt") ml-1">@e.CurrencyLabel</span>
+                            </td>
+                            <td class="px-6 py-5 text-right tabular-nums">$@e.AmountInUsdAtEntry.ToString("0.00")</td>
+                            <td class="px-6 py-5 text-on-surface-variant italic">@e.ShareCount-way</td>
+                            <td class="px-6 py-5 text-[13px] text-on-surface-variant">@e.CreatedAt.ToString("d MMM HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @* Served locally (not a CDN) so the balances panel works on offline /
+       locked-down networks - a missing SignalR script was making the panel
+       hang on "Loading…". *@
+    <script src="~/lib/signalr/signalr.min.js" asp-append-version="true"></script>
+    <script src="~/js/balances.js" asp-append-version="true"></script>
+}

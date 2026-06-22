@@ -1,0 +1,32 @@
+@model CreateGroupViewModel
+@{
+    ViewData["Title"] = "New group";
+}
+
+<div class="max-w-[440px] mx-auto">
+    <div class="card p-8">
+        <h1 class="font-serif text-3xl text-primary mb-2">Create a group</h1>
+        <p class="text-on-surface-variant mb-6 text-sm">A shared space to track expenses for a trip, flat, or anything else.</p>
+
+        <form asp-action="Create" method="post" class="space-y-5">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div>
+                <label asp-for="Name" class="field-label"></label>
+                <input asp-for="Name" class="field" placeholder="e.g. Lagos Trip 2026" />
+                <span asp-validation-for="Name" class="field-error"></span>
+            </div>
+
+            <div class="flex items-start gap-3 p-4 bg-surface-low rounded-lg">
+                <span class="material-symbols-outlined text-gold text-[20px]">info</span>
+                <p class="text-xs leading-relaxed text-on-surface-variant">
+                    Once created, you can add existing members and start recording shared expenses.
+                </p>
+            </div>
+
+            <div class="flex items-center gap-3 pt-1">
+                <button type="submit" class="btn btn-gold">Create group</button>
+                <a asp-action="Index" class="btn btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

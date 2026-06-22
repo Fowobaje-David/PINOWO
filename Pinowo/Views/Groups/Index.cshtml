@@ -1,0 +1,56 @@
+@model List<GroupListItem>
+@{
+    ViewData["Title"] = "Groups";
+}
+
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+    <div>
+        <h1 class="font-serif text-4xl md:text-5xl text-primary tracking-tight">Groups</h1>
+        <p class="text-on-surface-variant mt-2">Every group you're a member of.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-gold">
+        <span class="material-symbols-outlined text-[18px]">add</span> New group
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="card border-dashed p-12 text-center">
+        <p class="text-on-surface-variant mb-4">No groups yet.</p>
+        <a asp-action="Create" class="btn btn-gold-outline">Create one</a>
+    </div>
+}
+else
+{
+    <div class="card overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-surface-low border-b border-hairline">
+                    <th class="px-8 py-4 th-label">Group name</th>
+                    <th class="px-8 py-4 th-label text-center">Members</th>
+                    <th class="px-8 py-4 th-label text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-hairline">
+                @foreach (var g in Model)
+                {
+                    <tr class="hover:bg-surface-low/60 transition-colors">
+                        <td class="px-8 py-6">
+                            <div class="flex items-center gap-3">
+                                <span class="font-serif text-xl text-primary">@g.Name</span>
+                                @if (g.IsCreatedByCurrentUser)
+                                {
+                                    <span class="chip chip-owner">Owner</span>
+                                }
+                            </div>
+                        </td>
+                        <td class="px-8 py-6 text-center text-on-surface-variant">@g.MemberCount</td>
+                        <td class="px-8 py-6 text-right">
+                            <a asp-action="Details" asp-route-id="@g.Id" class="btn btn-gold-outline btn-sm">Open</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

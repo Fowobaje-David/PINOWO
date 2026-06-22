@@ -1,0 +1,109 @@
+@using Pinowo.Models.Enums
+@model AddExpenseViewModel
+@{
+    ViewData["Title"] = "Add expense";
+}
+
+<div class="max-w-[560px] mx-auto">
+    <div class="card p-6 md:p-8">
+        <div class="flex justify-between items-start mb-6">
+            <h1 class="font-serif text-3xl text-primary">Add expense</h1>
+            <a asp-controller="Groups" asp-action="Details" asp-route-id="@Model.GroupId" class="btn btn-ghost text-sm">
+                <span class="material-symbols-outlined text-[16px]">arrow_back</span> @Model.GroupName
+            </a>
+        </div>
+
+        <form asp-action="Add" method="post" class="space-y-6">
+            <div asp-validation-summary="ModelOnly"></div>
+            <input type="hidden" asp-for="GroupId" />
+
+            <div>
+                <label asp-for="Description" class="field-label"></label>
+                <input asp-for="Description" class="field" placeholder="e.g. Dinner at Yellow Chilli" />
+                <span asp-validation-for="Description" class="field-error"></span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                <div>
+                    <label class="field-label">Currency</label>
+                    @* Hidden field preserves the exact posted name/binding ("Currency").
+                       The segmented toggle below just drives its value. *@
+                    <input type="hidden" asp-for="Currency" id="currency-input" />
+                    <div class="flex p-1 bg-surface-container rounded-full hairline h-[50px]">
+                        <button type="button" data-cur="@CurrencyType.BTC" id="cur-btc"
+                                class="cur-btn flex-1 flex items-center justify-center gap-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all">
+                            <span class="material-symbols-outlined text-[18px]">currency_bitcoin</span> BTC
+                        </button>
+                        <button type="button" data-cur="@CurrencyType.STABLECOIN" id="cur-usdt"
+                                class="cur-btn flex-1 flex items-center justify-center gap-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all">
+                            <span class="material-symbols-outlined text-[18px]">monetization_on</span> USDT
+                        </button>
+                    </div>
+                    <span asp-validation-for="Currency" class="field-error"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Amount" class="field-label"></label>
+                    @* step="any" disables the browser's multiple-of-step check, which
+                       wrongly rejected valid decimals (e.g. 67.63, 0.001). Correctness
+                       is enforced server-side by [Range(0.00000001, 1e9)] + decimal(18,8). *@
+                    <div class="relative">
+                        <input asp-for="Amount" class="field text-right pr-10 font-serif text-lg" type="number" step="any" min="0" inputmode="decimal" placeholder="0.00" />
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">payments</span>
+                    </div>
+                    <span asp-validation-for="Amount" class="field-error"></span>
+                </div>
+            </div>
+
+            <div>
+                <label asp-for="PaidByUserId" class="field-label"></label>
+                <div class="select-wrap">
+                    <select asp-for="PaidByUserId" class="field">
+                        @foreach (var m in Model.Members)
+                        {
+                            <option value="@m.Id">@m.Name</option>
+                        }
+                    </select>
+                    <span class="chevron material-symbols-outlined">expand_more</span>
+                </div>
+                <span asp-validation-for="PaidByUserId" class="field-error"></span>
+            </div>
+
+            <div class="flex items-center gap-2 text-on-surface-variant">
+                <span class="material-symbols-outlined text-[16px]">info</span>
+                <p class="text-xs">Split: equal across all @Model.Members.Count group member(s).</p>
+            </div>
+
+            <div class="flex items-center gap-3 pt-1">
+                <button type="submit" class="btn btn-obsidian">Add expense</button>
+                <a asp-controller="Groups" asp-action="Details" asp-route-id="@Model.GroupId" class="btn btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .cur-btn { color:#45474a; }
+        .cur-btn.active { background:#0B0D10; color:#fff; box-shadow:0 1px 6px rgba(0,0,0,.15); }
+        #cur-btc.active { box-shadow:0 0 12px rgba(247,147,26,.25); }
+        #cur-usdt.active { box-shadow:0 0 12px rgba(38,161,123,.25); }
+    </style>
+    <script>
+        (function () {
+            var input = document.getElementById('currency-input');
+            var btc = document.getElementById('cur-btc');
+            var usdt = document.getElementById('cur-usdt');
+            function select(val) {
+                input.value = val;
+                var isBtc = (val === btc.dataset.cur);
+                btc.classList.toggle('active', isBtc);
+                usdt.classList.toggle('active', !isBtc);
+            }
+            btc.addEventListener('click', function () { select(btc.dataset.cur); });
+            usdt.addEventListener('click', function () { select(usdt.dataset.cur); });
+            // Initialise from the model-bound hidden value (defaults to BTC).
+            select(input.value && input.value === usdt.dataset.cur ? usdt.dataset.cur : btc.dataset.cur);
+        })();
+    </script>
+}

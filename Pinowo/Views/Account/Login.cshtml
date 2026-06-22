@@ -1,0 +1,48 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<div class="max-w-[420px] mx-auto">
+    <div class="flex flex-col items-center text-center mb-8">
+        <svg width="44" height="44" viewBox="0 0 40 40" fill="none" class="mb-3">
+            <circle cx="20" cy="20" r="18" stroke="#C9A227" stroke-width="2.5" />
+            <path d="M20 2V38" stroke="#C9A227" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M38 20H2" stroke="#C9A227" stroke-width="2.5" stroke-linecap="round" opacity="0.3" />
+            <path d="M20 20L32.7 7.3" stroke="#C9A227" stroke-width="2.5" stroke-linecap="round" />
+        </svg>
+        <h1 class="font-serif text-3xl text-primary">Pínówó</h1>
+    </div>
+
+    <div class="card p-8">
+        <div class="text-center mb-6">
+            <h2 class="font-serif text-2xl text-primary">Log in</h2>
+            <p class="text-on-surface-variant mt-1 text-sm">Welcome back to your private ledger.</p>
+        </div>
+
+        <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" class="space-y-5">
+            <div asp-validation-summary="ModelOnly"></div>
+
+            <div>
+                <label asp-for="Email" class="field-label"></label>
+                <input asp-for="Email" class="field" autocomplete="email" placeholder="e.g. amara@pinowo.demo" />
+                <span asp-validation-for="Email" class="field-error"></span>
+            </div>
+            <div>
+                <label asp-for="Password" class="field-label"></label>
+                <input asp-for="Password" class="field" autocomplete="current-password" placeholder="••••••••" />
+                <span asp-validation-for="Password" class="field-error"></span>
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input asp-for="RememberMe" class="h-4 w-4 rounded border-hairline text-gold focus:ring-gold" />
+                <span class="text-sm text-on-surface-variant">Remember me?</span>
+            </label>
+
+            <button type="submit" class="btn btn-gold w-full">Log in</button>
+        </form>
+
+        <div class="mt-6 pt-5 border-t border-hairline text-center text-sm text-on-surface-variant">
+            No account yet? <a asp-action="Register" class="text-gold font-semibold hover:underline underline-offset-4">Register</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Pinowo/Pinowo.csproj" />
+  <Project Path="Pinowo.Tests/Pinowo.Tests.csproj" />
+</Solution>

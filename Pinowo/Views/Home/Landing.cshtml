@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Welcome";
+}
+
+<section class="text-center max-w-3xl mx-auto pt-8 md:pt-16">
+    <h1 class="font-serif text-4xl md:text-6xl leading-tight text-primary mb-6">
+        Split expenses , Settled clearly.
+    </h1>
+    <p class="text-lg text-on-surface-variant max-w-2xl mx-auto mb-10">
+        Track who owes whom across a group in Bitcoin and a USDT stablecoin, reconciled
+        to a common USD reference with live exchange rates - no math, no spreadsheets.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a asp-controller="Account" asp-action="Register" class="btn btn-obsidian px-10 py-4">Get started</a>
+        <a asp-controller="Account" asp-action="Login" class="btn btn-gold-outline px-10 py-4">Log in</a>
+    </div>
+</section>
+
+<section class="max-w-container mx-auto mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="flex flex-col gap-3">
+        <div class="w-8 h-8 bg-gold text-white flex items-center justify-center rounded-md text-sm font-semibold">1</div>
+        <h3 class="font-serif text-xl text-primary">Add a shared expense</h3>
+        <p class="text-on-surface-variant">Enter an amount in BTC or USDT and who paid. We record the ledger entries for you.</p>
+    </div>
+    <div class="flex flex-col gap-3">
+        <div class="w-8 h-8 bg-gold text-white flex items-center justify-center rounded-md text-sm font-semibold">2</div>
+        <h3 class="font-serif text-xl text-primary">We reconcile to USD</h3>
+        <p class="text-on-surface-variant">Each expense is snapshotted at the live rate, so balances stay fair across currencies.</p>
+    </div>
+    <div class="flex flex-col gap-3">
+        <div class="w-8 h-8 bg-gold text-white flex items-center justify-center rounded-md text-sm font-semibold">3</div>
+        <h3 class="font-serif text-xl text-primary">See who owes whom - live</h3>
+        <p class="text-on-surface-variant">Balances update in real time, and a single tap marks a debt as settled.</p>
+    </div>
+</section>

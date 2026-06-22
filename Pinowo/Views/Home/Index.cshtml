@@ -1,0 +1,51 @@
+@model List<GroupListItem>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+    <div>
+        <h1 class="font-serif text-4xl md:text-5xl text-primary tracking-tight">Your groups</h1>
+        <p class="text-on-surface-variant mt-2">Shared expenses, reconciled in crypto and USD.</p>
+    </div>
+    <a asp-controller="Groups" asp-action="Create" class="btn btn-gold">
+        <span class="material-symbols-outlined text-[18px]">add</span> New group
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="card border-dashed p-12 flex flex-col items-center text-center">
+        <span class="material-symbols-outlined text-[48px] text-on-surface-variant/40 mb-4">groups_2</span>
+        <h3 class="font-serif text-2xl text-on-surface-variant mb-2">No groups yet</h3>
+        <p class="text-on-surface-variant mb-5">Create one to start splitting expenses with friends.</p>
+        <a asp-controller="Groups" asp-action="Create" class="btn btn-gold-outline">Create a group</a>
+    </div>
+}
+else
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        @foreach (var g in Model)
+        {
+            <div class="card p-8 flex flex-col justify-between transition-transform duration-300 hover:-translate-y-1">
+                <div>
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center">
+                            <span class="material-symbols-outlined text-gold">group</span>
+                        </div>
+                        @if (g.IsCreatedByCurrentUser)
+                        {
+                            <span class="chip chip-owner">Owner</span>
+                        }
+                    </div>
+                    <h3 class="font-serif text-2xl text-primary mb-1">@g.Name</h3>
+                    <p class="text-sm text-on-surface-variant">@g.MemberCount member@(g.MemberCount == 1 ? "" : "s")</p>
+                </div>
+                <a asp-controller="Groups" asp-action="Details" asp-route-id="@g.Id"
+                   class="btn btn-outline w-full mt-8">
+                    Open <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                </a>
+            </div>
+        }
+    </div>
+}

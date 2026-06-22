@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="max-w-xl mx-auto text-center">
+    <div class="flex justify-center mb-6">
+        <div class="w-16 h-16 rounded-full bg-surface-low flex items-center justify-center border border-hairline">
+            <span class="material-symbols-outlined text-neg text-[34px]">priority_high</span>
+        </div>
+    </div>
+    <div class="card p-10">
+        <h1 class="font-serif text-3xl text-primary mb-3">Something went wrong</h1>
+        <p class="text-on-surface-variant max-w-md mx-auto">
+            We hit an unexpected error while processing your request. Please try again, or return to the dashboard.
+        </p>
+    </div>
+    <div class="mt-6">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-gold-outline">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span> Back to dashboard
+        </a>
+    </div>
+</div>

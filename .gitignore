@@ -1,0 +1,25 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+artifacts/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userprefs
+*.DotSettings.user
+
+# Local Claude settings (per-user)
+.claude/settings.local.json
+
+# OS / misc
+Thumbs.db
+.DS_Store
+*.log
+
+# Node (Playwright/SignalR were installed in temp, but guard anyway)
+node_modules/

@@ -1,0 +1,94 @@
+@using Pinowo.Models.Enums
+@model SettleUpViewModel
+@{
+    ViewData["Title"] = "Settle up - " + Model.GroupName;
+}
+
+<div class="flex flex-col md:flex-row md:justify-between md:items-end gap-3 mb-10">
+    <h1 class="font-serif text-4xl md:text-5xl text-primary tracking-tight">Settle up - @Model.GroupName</h1>
+    <a asp-controller="Groups" asp-action="Details" asp-route-id="@Model.GroupId" class="btn btn-ghost self-start md:self-auto">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span> Back to group
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Suggested settlements -->
+    <section class="lg:col-span-5">
+        <h2 class="field-label mb-3">Suggested settlements</h2>
+        @if (!Model.SuggestedSettlements.Any())
+        {
+            <div class="card border-dashed p-10 text-center">
+                <div class="text-4xl mb-3">🎉</div>
+                <h3 class="font-serif text-2xl text-primary mb-2">Everyone's settled up</h3>
+                <p class="text-on-surface-variant text-sm max-w-xs mx-auto">Your ledger is perfectly balanced - nothing outstanding in this group.</p>
+            </div>
+        }
+        else
+        {
+            <div class="card p-6">
+                <div class="divide-y divide-hairline">
+                    @foreach (var s in Model.SuggestedSettlements)
+                    {
+                        <div class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+                            <span class="text-on-surface">
+                                <strong class="font-medium">@s.OwedByUserName</strong>
+                                <span class="text-on-surface-variant">pays</span>
+                                <strong class="font-medium">@s.OwedToUserName</strong>
+                            </span>
+                            <span class="pill-gold tabular-nums">$@s.NetAmountUsd.ToString("0.00")</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </section>
+
+    <!-- Your outstanding debts -->
+    <section class="lg:col-span-7">
+        <h2 class="field-label mb-3">Your outstanding debts</h2>
+        @if (!Model.MyDebts.Any())
+        {
+            <div class="card border-dashed p-10 text-center text-on-surface-variant">You don't owe anything in this group.</div>
+        }
+        else
+        {
+            <div class="card overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-surface-low border-b border-hairline">
+                            <th class="px-5 py-4 th-label">For</th>
+                            <th class="px-5 py-4 th-label">To</th>
+                            <th class="px-5 py-4 th-label text-right">Your share</th>
+                            <th class="px-5 py-4 th-label text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-hairline">
+                        @foreach (var d in Model.MyDebts)
+                        {
+                            <tr class="hover:bg-surface-low/60 transition-colors">
+                                <td class="px-5 py-5 font-medium text-on-surface">@d.Description</td>
+                                <td class="px-5 py-5 text-on-surface-variant">@d.CreditorName</td>
+                                <td class="px-5 py-5 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <span class="font-serif text-lg">@d.AmountDisplay</span>
+                                        <span class="chip @(d.Currency == CurrencyType.BTC ? "chip-btc" : "chip-usdt")">@d.CurrencyLabel</span>
+                                    </div>
+                                    <div class="text-[11px] text-on-surface-variant mt-1 tabular-nums">≈ $@d.ApproxUsd.ToString("0.00") USD</div>
+                                </td>
+                                <td class="px-5 py-5 text-right">
+                                    <form asp-action="Settle" method="post" class="inline">
+                                        <input type="hidden" name="expenseId" value="@d.ExpenseId" />
+                                        <input type="hidden" name="shareId" value="@d.ShareId" />
+                                        <input type="hidden" name="groupId" value="@Model.GroupId" />
+                                        <button type="submit" class="btn btn-settle">Mark settled</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-right text-xs text-on-surface-variant italic mt-3">Mark settled only after you've actually paid the funds.</p>
+        }
+    </section>
+</div>

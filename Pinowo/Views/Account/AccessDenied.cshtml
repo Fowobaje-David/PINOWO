@@ -1,0 +1,21 @@
+@{
+    ViewData["Title"] = "Access denied";
+}
+
+<div class="max-w-xl mx-auto">
+    <div class="card p-10 md:p-14 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-30"></div>
+        <div class="flex justify-center mb-6">
+            <div class="w-16 h-16 rounded-full bg-surface-low flex items-center justify-center border border-hairline">
+                <span class="material-symbols-outlined text-gold text-[34px]">lock_person</span>
+            </div>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl text-primary mb-3">Access denied</h1>
+        <p class="text-on-surface-variant max-w-md mx-auto mb-8">
+            You don't have permission to view this group's ledger. Only group members can see its balances.
+        </p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-obsidian">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span> Back to dashboard
+        </a>
+    </div>
+</div>
