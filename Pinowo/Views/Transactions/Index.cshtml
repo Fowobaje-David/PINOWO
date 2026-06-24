@@ -1,0 +1,70 @@
+@model List<TransactionHistoryItem>
+@{
+    ViewData["Title"] = "Transactions";
+    var explorerBase = (string)ViewBag.ExplorerBase;
+    var symbol = (string)ViewBag.TokenSymbol;
+}
+
+<div class="mb-10">
+    <h1 class="font-serif text-4xl md:text-5xl text-primary tracking-tight">Transactions</h1>
+    <p class="text-on-surface-variant mt-2">Every settlement you've made or received, with its on-chain record.</p>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="card border-dashed p-12 text-center text-on-surface-variant">
+        No settlements yet. Settle a debt to see it here.
+    </div>
+}
+else
+{
+    <div class="card overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-surface-low border-b border-hairline">
+                    <th class="px-5 py-4 th-label">Date</th>
+                    <th class="px-5 py-4 th-label">Group</th>
+                    <th class="px-5 py-4 th-label">For</th>
+                    <th class="px-5 py-4 th-label">Flow</th>
+                    <th class="px-5 py-4 th-label text-right">Amount</th>
+                    <th class="px-5 py-4 th-label">On-chain</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-hairline">
+                @foreach (var t in Model)
+                {
+                    <tr class="hover:bg-surface-low/60 transition-colors">
+                        <td class="px-5 py-4 text-[13px] text-on-surface-variant whitespace-nowrap">
+                            @(t.SettledAt?.ToString("d MMM yyyy, HH:mm") ?? "-")
+                        </td>
+                        <td class="px-5 py-4 text-on-surface-variant">@t.GroupName</td>
+                        <td class="px-5 py-4 font-medium text-on-surface">@t.Description</td>
+                        <td class="px-5 py-4">
+                            <span class="chip @(t.IsIncoming ? "badge-pos" : "badge-neg")">
+                                @(t.IsIncoming ? "received" : "paid")
+                            </span>
+                            <span class="text-[13px] text-on-surface-variant ml-1">@t.FromName &rarr; @t.ToName</span>
+                        </td>
+                        <td class="px-5 py-4 text-right tabular-nums font-medium">
+                            @t.AmountUsd.ToString("0.00") <span class="text-on-surface-variant">@symbol</span>
+                        </td>
+                        <td class="px-5 py-4">
+                            @if (!string.IsNullOrEmpty(t.TxHash))
+                            {
+                                <a href="@(explorerBase + t.TxHash)" target="_blank" rel="noopener"
+                                   class="inline-flex items-center gap-1 text-gold underline font-medium text-[13px]">
+                                    @(t.TxHash.Substring(0, 10))…
+                                    <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-[13px] text-on-surface-variant italic">ledger only</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

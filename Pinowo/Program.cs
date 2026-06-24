@@ -44,6 +44,11 @@ builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IBalanceCalculatorService, BalanceCalculatorService>();
 builder.Services.AddScoped<ISettlementService, SettlementService>();
 
+// Testnet (Sepolia) settlement transfers - optional, off unless configured.
+builder.Services.Configure<Pinowo.Models.ChainOptions>(
+    builder.Configuration.GetSection(Pinowo.Models.ChainOptions.SectionName));
+builder.Services.AddScoped<IChainPaymentService, NethereumChainPaymentService>();
+
 // --- MVC (UI) + API controllers + SignalR (hub wired in a later phase) ---
 builder.Services
     .AddControllersWithViews()
@@ -58,6 +63,20 @@ var app = builder.Build();
 if (args.Contains("seed"))
 {
     await Pinowo.SeedRunner.RunAsync(app.Services);
+    return;
+}
+
+// Testnet connectivity smoke test: `dotnet run -- chainprobe`.
+if (args.Contains("chainprobe"))
+{
+    await Pinowo.ChainProbe.RunAsync();
+    return;
+}
+
+// One-time mock ERC-20 stablecoin deploy: `dotnet run -- deploytoken`.
+if (args.Contains("deploytoken"))
+{
+    await Pinowo.TokenDeployer.RunAsync(app.Services);
     return;
 }
 

@@ -109,6 +109,7 @@
                     <div class="hidden md:flex items-center gap-8">
                         <a class="@NavActive("Home")" asp-controller="Home" asp-action="Index">Dashboard</a>
                         <a class="@NavActive("Groups")" asp-controller="Groups" asp-action="Index">Groups</a>
+                        <a class="@NavActive("Transactions")" asp-controller="Transactions" asp-action="Index">Transactions</a>
                     </div>
                 }
             </div>
@@ -135,8 +136,15 @@
             @if (TempData["StatusMessage"] is string status)
             {
                 <div id="status-banner" class="alert-success rounded-xl px-4 py-3 mb-8 flex items-center justify-between">
-                    <span class="flex items-center gap-2">
+                    <span class="flex items-center gap-2 flex-wrap">
                         <span class="material-symbols-outlined text-[18px]">check_circle</span>@status
+                        @if (TempData["TxUrl"] is string txUrl)
+                        {
+                            <a href="@txUrl" target="_blank" rel="noopener" class="inline-flex items-center gap-1 underline font-medium text-gold">
+                                View transaction on Etherscan
+                                <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                            </a>
+                        }
                     </span>
                     <button type="button" onclick="document.getElementById('status-banner').remove()" class="material-symbols-outlined text-[18px] cursor-pointer opacity-70 hover:opacity-100">close</button>
                 </div>

@@ -94,7 +94,16 @@ namespace Pinowo.Controllers
                 case SettleOutcome.Settled:
                     await _hub.Clients.Group(BalancesHub.GroupName(result.GroupId))
                         .SendAsync("BalancesChanged", result.GroupId);
-                    TempData["StatusMessage"] = "Marked as settled.";
+
+                    if (result.ExplorerUrl is not null)
+                    {
+                        TempData["StatusMessage"] = $"Settled {result.AmountUsd:0.00} pUSD on Sepolia.";
+                        TempData["TxUrl"] = result.ExplorerUrl;
+                    }
+                    else
+                    {
+                        TempData["StatusMessage"] = "Marked as settled.";
+                    }
                     break;
                 case SettleOutcome.AlreadySettled:
                     TempData["StatusMessage"] = "That share was already settled.";

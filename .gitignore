@@ -23,3 +23,6 @@ Thumbs.db
 
 # Node (Playwright/SignalR were installed in temp, but guard anyway)
 node_modules/
+
+# JetBrains Rider
+.idea/

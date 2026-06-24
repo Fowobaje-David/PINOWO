@@ -12,7 +12,12 @@ namespace Pinowo.Services
     /// Result of attempting to settle a share. GroupId is returned (when known)
     /// so the caller can push a SignalR "BalancesChanged" to the right group.
     /// </summary>
-    public record SettleResult(SettleOutcome Outcome, int GroupId);
+    public record SettleResult(
+        SettleOutcome Outcome,
+        int GroupId,
+        string? TxHash = null,
+        string? ExplorerUrl = null,
+        decimal? AmountUsd = null);
 
     public interface ISettlementService
     {

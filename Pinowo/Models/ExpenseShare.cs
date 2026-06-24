@@ -22,6 +22,14 @@ namespace Pinowo.Models
         public decimal ShareAmount { get; set; }
 
         public bool IsSettled { get; set; } = false;
+
+        // SettledAt doubles as the settlement timestamp. The two fields below are
+        // populated only when the settlement also moved funds on-chain.
         public DateTime? SettledAt { get; set; }
+
+        public string? SettlementTxHash { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? SettlementTokenAmount { get; set; }
     }
 }
